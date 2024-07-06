@@ -1,5 +1,14 @@
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
 # Compiled class file
 *.class
+
+# Target folder generated after build
+target
 
 # Log file
 *.log
