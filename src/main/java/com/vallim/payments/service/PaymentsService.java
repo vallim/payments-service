@@ -35,7 +35,7 @@ public class PaymentsService {
         paymentRepository.save(payment);
 
         final OutboxEvent outboxEvent = new OutboxEvent();
-        outboxEvent.setType(OutboxEventType.PaymentCreated);
+        outboxEvent.setType(OutboxEventType.PAYMENT_CREATED);
         outboxEvent.setPayload(serialize(payment));
         outBoxEventRepository.save(outboxEvent);
     }

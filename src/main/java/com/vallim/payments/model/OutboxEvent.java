@@ -23,8 +23,8 @@ import java.util.UUID;
 public class OutboxEvent {
 
     public enum OutboxEventType {
-        PaymentCreated,
-        WebhookNotificationCreated
+        PAYMENT_CREATED,
+        UNKNOWN
     }
 
     enum OutboxEventStatus {
