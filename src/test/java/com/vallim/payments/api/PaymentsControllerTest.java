@@ -2,7 +2,7 @@ package com.vallim.payments.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vallim.payments.model.Payment;
-import com.vallim.payments.service.PaymentsService;
+import com.vallim.payments.service.PaymentService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,7 +25,7 @@ public class PaymentsControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private PaymentsService paymentsService;
+    private PaymentService paymentService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -39,13 +39,13 @@ public class PaymentsControllerTest {
                     .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isCreated());
 
-            verify(paymentsService).save(any());
+            verify(paymentService).save(any());
     }
 
     @Test
     public void testCreatePayment_throwsBadRequestOnIllegalArgumentException() throws Exception {
 
-        doThrow(new IllegalArgumentException()).when(paymentsService).save(any());
+        doThrow(new IllegalArgumentException()).when(paymentService).save(any());
 
         mockMvc.perform(post("/payments")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -53,13 +53,13 @@ public class PaymentsControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
 
-        verify(paymentsService).save(any());
+        verify(paymentService).save(any());
     }
 
     @Test
     public void testCreatePayment_throws500OnUnexpectedException() throws Exception {
 
-        doThrow(new RuntimeException()).when(paymentsService).save(any());
+        doThrow(new RuntimeException()).when(paymentService).save(any());
 
         mockMvc.perform(post("/payments")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -67,6 +67,6 @@ public class PaymentsControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError());
 
-        verify(paymentsService).save(any());
+        verify(paymentService).save(any());
     }
 }

@@ -20,7 +20,7 @@ public class EventPublisherServiceTest {
     private EventPublisherService eventPublisherService;
 
     @Test
-    public void testPublishEvent_paymentCreated_sendsToCorrectExchangeAndRoutingKey() {
+    public void shouldSendToCorrectExchangeAndRoutingKeyWhenPaymentCreatedEventType() {
         OutboxEvent event = new OutboxEvent();
         event.setType(OutboxEventType.PAYMENT_CREATED);
         event.setPayload("payment data");
@@ -31,7 +31,7 @@ public class EventPublisherServiceTest {
     }
 
     @Test
-    public void testPublishEvent_unknownEventType_sendsToDefaultExchangeAndRoutingKey() {
+    public void shouldSendToDefaultExchangeAndRoutingKeyWhenUnknownEventType() {
         OutboxEvent event = new OutboxEvent();
         event.setType(OutboxEventType.UNKNOWN);
         event.setPayload("some data");

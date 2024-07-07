@@ -12,15 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class PaymentsService {
+public class PaymentService {
 
     private PaymentRepository paymentRepository;
     private CardNumberValidator cardNumberValidator;
     private OutboxEventRepository outBoxEventRepository;
     private ObjectMapper objectMapper;
 
-    public PaymentsService(PaymentRepository paymentRepository, CardNumberValidator cardNumberValidator,
-                           OutboxEventRepository outBoxEventRepository, ObjectMapper objectMapper) {
+    public PaymentService(PaymentRepository paymentRepository, CardNumberValidator cardNumberValidator,
+                          OutboxEventRepository outBoxEventRepository, ObjectMapper objectMapper) {
         this.paymentRepository = paymentRepository;
         this.cardNumberValidator = cardNumberValidator;
         this.outBoxEventRepository = outBoxEventRepository;
