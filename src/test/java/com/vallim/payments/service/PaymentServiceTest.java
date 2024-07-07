@@ -37,6 +37,9 @@ public class PaymentServiceTest {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private AesCardNumberCrypto aesCardNumberCrypto;
+
     @InjectMocks
     private PaymentService paymentService;
 
@@ -56,6 +59,7 @@ public class PaymentServiceTest {
 
         paymentService.save(payment);
 
+        verify(aesCardNumberCrypto).encrypt("1234567812345678");
         verify(paymentRepository).save(payment);
         verify(outBoxEventRepository).save(any(OutboxEvent.class));
     }
@@ -66,6 +70,7 @@ public class PaymentServiceTest {
 
         assertThrows(IllegalArgumentException.class, () -> paymentService.save(payment));
 
+        verify(aesCardNumberCrypto, never()).encrypt(any());
         verify(paymentRepository, never()).save(any(Payment.class));
         verify(outBoxEventRepository, never()).save(any(OutboxEvent.class));
     }
@@ -78,12 +83,13 @@ public class PaymentServiceTest {
 
         assertThrows(RuntimeException.class, () -> paymentService.save(payment));
 
+        verify(aesCardNumberCrypto).encrypt("1234567812345678");
         verify(paymentRepository).save(payment);
         verify(outBoxEventRepository, never()).save(any(OutboxEvent.class));
     }
 
     @Test
-    void shouldHandleDatabaseExceptions() throws JsonProcessingException {
+    void shouldHandleDatabaseExceptions() {
         when(cardNumberValidator.isValid(payment.getCardNumber())).thenReturn(true);
         doThrow(new InvalidDataAccessApiUsageException("Database error"))
                 .when(paymentRepository).save(any(Payment.class));

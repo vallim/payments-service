@@ -7,7 +7,6 @@ import com.vallim.payments.model.OutboxEvent.OutboxEventType;
 import com.vallim.payments.model.Payment;
 import com.vallim.payments.repository.OutboxEventRepository;
 import com.vallim.payments.repository.PaymentRepository;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +17,16 @@ public class PaymentService {
     private CardNumberValidator cardNumberValidator;
     private OutboxEventRepository outBoxEventRepository;
     private ObjectMapper objectMapper;
+    private AesCardNumberCrypto aesCardNumberCrypto;
 
     public PaymentService(PaymentRepository paymentRepository, CardNumberValidator cardNumberValidator,
-                          OutboxEventRepository outBoxEventRepository, ObjectMapper objectMapper) {
+                          OutboxEventRepository outBoxEventRepository, ObjectMapper objectMapper,
+                          AesCardNumberCrypto aesCardNumberCrypto) {
         this.paymentRepository = paymentRepository;
         this.cardNumberValidator = cardNumberValidator;
         this.outBoxEventRepository = outBoxEventRepository;
         this.objectMapper = objectMapper;
+        this.aesCardNumberCrypto = aesCardNumberCrypto;
     }
 
     @Transactional
@@ -32,12 +34,20 @@ public class PaymentService {
         if (!cardNumberValidator.isValid(payment.getCardNumber())) {
             throw new IllegalArgumentException("card number is not valid");
         }
+        String encryptedCardNumber = aesCardNumberCrypto.encrypt(payment.getCardNumber());
+        payment.setCardNumber(encryptedCardNumber);
         paymentRepository.save(payment);
 
-        final OutboxEvent outboxEvent = new OutboxEvent();
+        final OutboxEvent outboxEvent = createPaymentCreatedEvent(payment);
+
+        outBoxEventRepository.save(outboxEvent);
+    }
+
+    private OutboxEvent createPaymentCreatedEvent(Payment payment) {
+        OutboxEvent outboxEvent = new OutboxEvent();
         outboxEvent.setType(OutboxEventType.PAYMENT_CREATED);
         outboxEvent.setPayload(serialize(payment));
-        outBoxEventRepository.save(outboxEvent);
+        return outboxEvent;
     }
 
     private String serialize(Payment payment) {
