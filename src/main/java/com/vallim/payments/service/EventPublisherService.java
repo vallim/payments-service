@@ -1,11 +1,15 @@
 package com.vallim.payments.service;
 
 import com.vallim.payments.model.OutboxEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EventPublisherService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EventPublisherService.class);
 
     private final RabbitTemplate rabbitTemplate;
 
@@ -16,7 +20,9 @@ public class EventPublisherService {
     public void publishEvent(OutboxEvent event) {
         String exchange = determineExchange(event.getType());
         String routingKey = determineRoutingKey(event.getType());
-        rabbitTemplate.convertAndSend(exchange, routingKey, event);
+
+        logger.info("Publishing event {} to topic {} and routing key {}", event.getType(), exchange, routingKey);
+        rabbitTemplate.convertAndSend(exchange, routingKey, event.getPayload());
     }
 
     private String determineExchange(OutboxEvent.OutboxEventType eventType) {

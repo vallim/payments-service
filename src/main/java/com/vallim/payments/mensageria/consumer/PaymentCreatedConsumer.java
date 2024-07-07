@@ -1,7 +1,6 @@
 package com.vallim.payments.mensageria.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vallim.payments.model.Payment;
 import com.vallim.payments.repository.WebhookRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -20,10 +19,10 @@ public class PaymentCreatedConsumer {
         this.objectMapper = objectMapper;
     }
 
-    public void process(Payment payment) {
+    public void process(String event) {
 
         webhookRepository.findAll().forEach(webhook -> {
-            restTemplate.postForEntity(webhook.getCallbackUrl(), payment, String.class);
+            restTemplate.postForEntity(webhook.getCallbackUrl(), event, String.class);
         });
     }
 }
