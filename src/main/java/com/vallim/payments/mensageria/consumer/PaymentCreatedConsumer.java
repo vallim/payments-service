@@ -1,48 +1,29 @@
 package com.vallim.payments.mensageria.consumer;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vallim.payments.mensageria.event.WebhookEvent;
-import com.vallim.payments.model.OutboxEvent;
-import com.vallim.payments.model.OutboxEvent.OutboxEventType;
 import com.vallim.payments.model.Payment;
-import com.vallim.payments.model.Webhook;
-import com.vallim.payments.repository.OutboxEventRepository;
 import com.vallim.payments.repository.WebhookRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class PaymentCreatedConsumer {
 
-    private final OutboxEventRepository outBoxEventRepository;
     private final WebhookRepository webhookRepository;
     private final ObjectMapper objectMapper;
+    private final RestTemplate restTemplate;
 
-    public PaymentCreatedConsumer(OutboxEventRepository outBoxEventRepository, WebhookRepository webhookRepository,
-                                  ObjectMapper objectMapper) {
-        this.outBoxEventRepository = outBoxEventRepository;
+    public PaymentCreatedConsumer(WebhookRepository webhookRepository,
+                                  ObjectMapper objectMapper, RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
         this.webhookRepository = webhookRepository;
         this.objectMapper = objectMapper;
     }
 
-    @Transactional
     public void process(Payment payment) {
+
         webhookRepository.findAll().forEach(webhook -> {
-            final OutboxEvent outboxEvent = new OutboxEvent();
-            outboxEvent.setType(OutboxEventType.WebhookNotificationCreated);
-            WebhookEvent webhookEvent = new WebhookEvent(webhook, payment);
-            outboxEvent.setPayload(serialize(webhookEvent));
-
-            outBoxEventRepository.save(outboxEvent);
+            restTemplate.postForEntity(webhook.getCallbackUrl(), payment, String.class);
         });
-    }
-
-    private String serialize(WebhookEvent event) {
-        try {
-            return objectMapper.writeValueAsString(event);
-        } catch (JsonProcessingException ex) {
-            throw new RuntimeException(ex);
-        }
     }
 }

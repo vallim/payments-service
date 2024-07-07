@@ -91,4 +91,8 @@ public class OutboxEvent {
     public void markAsProcessed() {
         this.status = OutboxEventStatus.PROCESSED;
     }
+
+    public void markAsProcessing() {
+        this.status = OutboxEventStatus.PROCESSING;
+    }
 }

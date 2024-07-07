@@ -16,7 +16,7 @@ public class EventPublisherService {
     public void publishEvent(OutboxEvent event) {
         String exchange = determineExchange(event.getType());
         String routingKey = determineRoutingKey(event.getType());
-        rabbitTemplate.convertAndSend(exchange, routingKey, event.getPayload());
+        rabbitTemplate.convertAndSend(exchange, routingKey, event);
     }
 
     private String determineExchange(OutboxEvent.OutboxEventType eventType) {

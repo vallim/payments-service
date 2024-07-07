@@ -1,7 +1,6 @@
 package com.vallim.payments.infra;
 
-
-import com.vallim.payments.mensageria.consumer.WebhookNotificationCreatedConsumer;
+import com.vallim.payments.mensageria.consumer.PaymentCreatedConsumer;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -18,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 public class QueueConfig {
 
     private String topicName = "payment";
-    private String queueName = "payment-created-webhook-notification";
+    private String queueName = "payment-created";
 
     @Bean
     public Queue queue() {
@@ -47,11 +46,11 @@ public class QueueConfig {
     }
 
     @Bean
-    public MessageListenerAdapter listenerAdapter(WebhookNotificationCreatedConsumer webhookNotificationCreatedConsumer) {
-        MessageListenerAdapter messageAdpater = new MessageListenerAdapter(webhookNotificationCreatedConsumer, "process");
-        messageAdpater.setMessageConverter(messageConverter());
+    public MessageListenerAdapter listenerAdapter(PaymentCreatedConsumer paymentCreatedConsumer) {
+        MessageListenerAdapter messageAdapter = new MessageListenerAdapter(paymentCreatedConsumer, "process");
+        messageAdapter.setMessageConverter(messageConverter());
 
-        return messageAdpater;
+        return messageAdapter;
     }
 
     @Bean
