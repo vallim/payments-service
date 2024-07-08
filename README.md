@@ -42,3 +42,22 @@ This command will start the following services:
 - **Spring Boot Application**: `http://localhost:8080`
 - **RabbitMQ Management UI**: `http://localhost:15672` (default credentials: guest/guest)
 - **Swagger UI**: `http://localhost:8080/swagger-ui.html`
+
+## Testing APIs
+
+1. Access Swagger UI: `http://localhost:8080/swagger-ui.html`
+2. Save a webhook:
+```json
+{
+  "callbackUrl": "http://localhost:8080/api-mock/success"
+}
+```
+3. Save a payment:
+```json
+{
+    "firstName": "Fabricio",
+    "lastName": "Vallim",
+    "zipCode": "16301352",
+    "cardNumber": "4111111111111111"
+}
+```
