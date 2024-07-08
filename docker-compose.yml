@@ -11,6 +11,8 @@ services:
     depends_on:
       - db
       - rabbitmq
+    networks:
+      - app-network
   db:
     image: postgres:latest
     ports:
@@ -21,6 +23,8 @@ services:
       - POSTGRES_DB=payments
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
   rabbitmq:
     image: rabbitmq:management
     ports:
@@ -28,7 +32,13 @@ services:
       - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app-network
 
 volumes:
   postgres_data: {}
   rabbitmq_data: {}
+
+networks:
+  app-network:
+    driver: bridge
