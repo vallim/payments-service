@@ -95,4 +95,8 @@ public class OutboxEvent {
     public void markAsProcessing() {
         this.status = OutboxEventStatus.PROCESSING;
     }
+
+    public void markAsFailed() {
+        this.status = OutboxEventStatus.FAILED;
+    }
 }
