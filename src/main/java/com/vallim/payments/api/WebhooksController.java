@@ -24,7 +24,7 @@ public class WebhooksController {
         return webhookRepository.findAll();
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity save(@RequestBody Webhook webhook) {
         webhookRepository.save(webhook);
 

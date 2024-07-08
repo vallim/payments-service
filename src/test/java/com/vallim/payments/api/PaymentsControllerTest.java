@@ -1,15 +1,18 @@
 package com.vallim.payments.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vallim.payments.infra.GlobalExceptionHandler;
 import com.vallim.payments.model.Payment;
 import com.vallim.payments.service.PaymentService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
@@ -17,29 +20,37 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(MockitoExtension.class)
 public class PaymentsControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private PaymentService paymentService;
 
-    @Autowired
+    @InjectMocks
+    private PaymentsController controller;
+
     private ObjectMapper objectMapper;
 
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    public void setup() {
+        mockMvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(GlobalExceptionHandler.class).build();
+
+        objectMapper = new ObjectMapper();
+    }
+
     @Test
-        public void testCreatePayment_returns201OnSuccess() throws Exception {
+    public void testCreatePayment_returns201OnSuccess() throws Exception {
 
-            mockMvc.perform(post("/payments")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsBytes(new Payment()))
-                    .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isCreated());
+        mockMvc.perform(post("/payments")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsBytes(new Payment()))
+                .accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isCreated());
 
-            verify(paymentService).save(any());
+        verify(paymentService).save(any());
     }
 
     @Test
