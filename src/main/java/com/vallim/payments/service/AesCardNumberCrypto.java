@@ -1,5 +1,6 @@
 package com.vallim.payments.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ public class AesCardNumberCrypto {
 
     private SecretKey secretKey;
 
+    @Autowired
     public AesCardNumberCrypto(@Value("${card_number.secret.key}") String secretKey) {
         this.secretKey = new SecretKeySpec(Base64.getDecoder().decode(secretKey), "AES");
     }
