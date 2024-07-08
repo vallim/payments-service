@@ -10,6 +10,10 @@ import com.vallim.payments.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 @Service
 public class PaymentService {
 
@@ -56,5 +60,10 @@ public class PaymentService {
         } catch (JsonProcessingException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    public List<Payment> findAll() {
+        return StreamSupport.stream(paymentRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 }

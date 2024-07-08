@@ -14,9 +14,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -79,5 +83,19 @@ public class PaymentsControllerTest {
                 .andExpect(status().is5xxServerError());
 
         verify(paymentService).save(any());
+    }
+
+    @Test
+    public void testListPayments_returns200OnSuccess() throws Exception {
+
+        when(paymentService.findAll()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/payments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new Payment()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(200));
+
+        verify(paymentService).findAll();
     }
 }
