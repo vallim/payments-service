@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class OutboxEventProcessor {
 
-    //TODO this configs can be in a properties file
     private static final int FIRST_PAGE = 0;
     private static final int PAGE_SIZE = 100;
     private static final int ONE_MINUTE = 1000;
@@ -48,7 +47,7 @@ public class OutboxEventProcessor {
         repository.save(event);
     }
 
-    private PageRequest createFirstPage() {
+    PageRequest createFirstPage() {
         return PageRequest.of(FIRST_PAGE, PAGE_SIZE, Sort.by(Sort.Direction.ASC, "createdAt"));
     }
 }
