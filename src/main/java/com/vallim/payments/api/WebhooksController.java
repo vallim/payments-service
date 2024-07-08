@@ -3,7 +3,9 @@ package com.vallim.payments.api;
 import com.vallim.payments.model.Webhook;
 import com.vallim.payments.repository.WebhookRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,13 @@ public class WebhooksController {
         webhookRepository.save(webhook);
 
         return ResponseEntity.status(201).build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteById(@PathVariable("id") Long id) {
+        webhookRepository.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 
 }

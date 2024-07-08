@@ -10,8 +10,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(
-                "/payments",
-                "/webhooks",
+                "/payments/**",
+                "/webhooks/**",
                 "/api-mock/**",
                 "/v3/api-docs/**",
                 "/swagger-ui.html",

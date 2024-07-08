@@ -2,6 +2,7 @@ package com.vallim.payments.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vallim.payments.infra.GlobalExceptionHandler;
+import com.vallim.payments.model.Payment;
 import com.vallim.payments.model.Webhook;
 import com.vallim.payments.repository.WebhookRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +15,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Collections;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,5 +66,31 @@ public class WebhooksControllerTest {
                 .andExpect(status().is5xxServerError());
 
         verify(webhookRepository).save(any());
+    }
+
+    @Test
+    public void testListWebhooks_returns200OnSuccess() throws Exception {
+
+        when(webhookRepository.findAll()).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/webhooks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new Payment()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is(200));
+
+        verify(webhookRepository).findAll();
+    }
+
+    @Test
+    public void testDeleteWebhook_returnsNoContentOnSuccess() throws Exception {
+
+        mockMvc.perform(delete("/webhooks/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsBytes(new Webhook()))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+
+        verify(webhookRepository).deleteById(1L);
     }
 }
